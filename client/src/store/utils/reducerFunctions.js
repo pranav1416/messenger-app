@@ -5,7 +5,7 @@ export const addMessageToStore = (state, payload) => {
     const newConvo = {
       id: message.conversationId,
       otherUser: sender,
-      messages: [message],
+      messages: [message]
     };
     newConvo.latestMessageText = message.text;
     return [newConvo, ...state];
@@ -80,4 +80,39 @@ export const addNewConvoToStore = (state, recipientId, message) => {
       return convo;
     }
   });
+};
+
+// function to add conversations in store
+// input args: conversations
+// return: coversations sorted in descending order
+export const addConversationsToStore = (conversations) => {
+  conversations.sort((convo1, convo2) => {
+    let convo1Date = new Date(
+      convo1.messages[convo1.messages.length - 1].createdAt
+    );
+    let convo2Date = new Date(
+      convo2.messages[convo2.messages.length - 1].createdAt
+    );
+    if (convo1Date > convo2Date) return -1;
+    else return 1;
+  });
+  return conversations;
+};
+
+// function to update conversations present in store
+// input args: state
+// return: conversations sorted in descending order
+export const updateConversationsInStore = (state) => {
+  let newState = [...state];
+  newState.sort((convo1, convo2) => {
+    let convo1Date = new Date(
+      convo1.messages[convo1.messages.length - 1].createdAt
+    );
+    let convo2Date = new Date(
+      convo2.messages[convo2.messages.length - 1].createdAt
+    );
+    if (convo1Date > convo2Date) return -1;
+    else return 1;
+  });
+  return newState;
 };

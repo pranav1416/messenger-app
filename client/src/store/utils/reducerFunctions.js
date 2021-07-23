@@ -164,3 +164,28 @@ export const addConversationsToStore = (conversations) => {
     });
   return conversations;
 };
+
+// function to update conversations present in store
+// input args: state
+// return: conversations sorted in descending order; update unreadCount for each conversation
+export const updateConversationsInStore = (state) => {
+  let newState = [...state];
+  newState
+    .sort((convo1, convo2) => {
+      let convo1Date = new Date(
+        convo1.messages[convo1.messages.length - 1].createdAt
+      );
+      let convo2Date = new Date(
+        convo2.messages[convo2.messages.length - 1].createdAt
+      );
+      if (convo1Date > convo2Date) return -1;
+      else return 1;
+    })
+    .forEach((convo) => {
+      let unreadCount = convo.messages.filter(
+        (msg) => msg.isRead === false
+      ).length;
+      Object.assign(convo, { unreadCount: unreadCount });
+    });
+  return newState;
+};

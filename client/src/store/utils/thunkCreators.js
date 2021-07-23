@@ -6,7 +6,8 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
-  setReadMessages
+  setReadMessages,
+  updateConversations
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -140,7 +141,11 @@ export const updateMessageStatus = (conversation) => async (dispatch) => {
       if (data.updatedMessages.length) {
         // dispatch action to update read status of messages in the state
         await dispatch(setReadMessages(conversation.id, data.updatedMessages));
+        // disaptch action to update conversations
+        dispatch(updateConversations());
       }
+    } else {
+      console.log("sender is user");
     }
   } catch (error) {
     console.error(error);

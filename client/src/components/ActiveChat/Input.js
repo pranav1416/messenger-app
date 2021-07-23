@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { FormControl, FilledInput } from "@material-ui/core";
-
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { postMessage } from "../../store/utils/thunkCreators";
+import {
+  postMessage,
+  updateMessageStatus
+} from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,10 +24,17 @@ const Input = ({ otherUser, conversationId }) => {
   const [text, setText] = useState("");
   const classes = useStyles();
   const user = useSelector((state) => state.user);
+  const conversation = useSelector((state) =>
+    state.conversations.find((conv) => conv.id === this.props.conversationId)
+  );
   const dispatch = useDispatch();
 
   const handleChange = (event) => {
     setText(event.target.value);
+  };
+
+  const handleClick = () => {
+    dispatch(updateMessageStatus(conversation));
   };
 
   const handleSubmit = async (event) => {
@@ -42,18 +51,23 @@ const Input = ({ otherUser, conversationId }) => {
   };
 
   return (
-    <form className={classes.root} onSubmit={handleSubmit}>
-      <FormControl fullWidth hiddenLabel>
-        <FilledInput
-          classes={{ root: classes.input }}
-          disableUnderline
-          placeholder='Type something...'
-          value={text}
-          name='text'
-          onChange={handleChange}
-        />
-      </FormControl>
-    </form>
+    <Box onClick={handleClick}>
+      <form className={classes.root} onSubmit={handleSubmit}>
+        <FormControl fullWidth hiddenLabel>
+          <FilledInput
+            classes={{ root: classes.input }}
+            disableUnderline
+            placeholder='Type something...'
+            value={text}
+            name='text'
+            onChange={handleChange}
+            onClick={handleClick}
+            onFocus={handleClick}
+            autoFocus
+          />
+        </FormControl>
+      </form>
+    </Box>
   );
 };
 

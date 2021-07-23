@@ -11,17 +11,28 @@ export const addMessageToStore = (state, payload) => {
     return [newConvo, ...state];
   }
 
-  return state.map((convo) => {
-    if (convo.id === message.conversationId) {
-      const convoCopy = { ...convo };
-      convoCopy.messages.push(message);
-      convoCopy.latestMessageText = message.text;
+  return state
+    .map((convo) => {
+      if (convo.id === message.conversationId) {
+        const convoCopy = { ...convo };
+        convoCopy.messages.push(message);
+        convoCopy.latestMessageText = message.text;
 
-      return convoCopy;
-    } else {
-      return convo;
-    }
-  });
+        return convoCopy;
+      } else {
+        return convo;
+      }
+    })
+    .sort((convo1, convo2) => {
+      let convo1Date = new Date(
+        convo1.messages[convo1.messages.length - 1].createdAt
+      );
+      let convo2Date = new Date(
+        convo2.messages[convo2.messages.length - 1].createdAt
+      );
+      if (convo1Date > convo2Date) return -1;
+      else return 1;
+    });
 };
 
 export const addOnlineUserToStore = (state, id) => {
@@ -97,22 +108,4 @@ export const addConversationsToStore = (conversations) => {
     else return 1;
   });
   return conversations;
-};
-
-// function to update conversations present in store
-// input args: state
-// return: conversations sorted in descending order
-export const updateConversationsInStore = (state) => {
-  let newState = [...state];
-  newState.sort((convo1, convo2) => {
-    let convo1Date = new Date(
-      convo1.messages[convo1.messages.length - 1].createdAt
-    );
-    let convo2Date = new Date(
-      convo2.messages[convo2.messages.length - 1].createdAt
-    );
-    if (convo1Date > convo2Date) return -1;
-    else return 1;
-  });
-  return newState;
 };

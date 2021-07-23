@@ -1,5 +1,7 @@
 import React from "react";
 import { Redirect, useHistory } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
+
 import { connect } from "react-redux";
 import {
   Grid,
@@ -7,11 +9,67 @@ import {
   Typography,
   Button,
   FormControl,
-  TextField,
+  TextField
 } from "@material-ui/core";
 import { login } from "./store/utils/thunkCreators";
+import Paper from "@material-ui/core/Paper";
+import bgImage from "./assets/bg-img.png";
+import bubbleIcon from "./assets/bubble.svg";
+
+const useStyles = makeStyles((theme) => ({
+  mainContainer: {
+    height: "100vh",
+    fontFamily: "OpenSans"
+  },
+  bgContainer: {
+    backgroundImage: `linear-gradient(to bottom, rgba(58,141,255,0.85),rgb(134,185,255,0.85)),url(${bgImage})`,
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  bgText: {
+    flexDirection: "column",
+    color: "white",
+    textAlign: "center"
+  },
+  registerContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: "2vh 5vw 0 0"
+  },
+  registerBtn: {
+    color: "#3A8DFF"
+  },
+  loginBtnContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  loginBtn: {
+    color: "white",
+    backgroundColor: "#3A8DFF",
+    alignSelf: "center"
+  },
+  formContainer: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "column",
+    paddingLeft: "20%",
+    paddingTop: "15%"
+  },
+  formChildren: {
+    width: "70%"
+  }
+}));
 
 const Login = (props) => {
+  const classes = useStyles();
   const history = useHistory();
   const { user, login } = props;
 
@@ -24,51 +82,102 @@ const Login = (props) => {
   };
 
   if (user.id) {
-    return <Redirect to="/home" />;
+    return <Redirect to='/home' />;
   }
 
   return (
-    <Grid container justify="center">
-      <Box>
-        <Grid container item>
-          <Typography>Need to register?</Typography>
-          <Button onClick={() => history.push("/register")}>Register</Button>
+    <Grid container className={classes.mainContainer}>
+      <Grid item sm={4} md={5} className={classes.bgContainer}>
+        <Box display={{ xs: "none", sm: "block", md: "block" }}>
+          <img src={bubbleIcon} />
+        </Box>
+        <Box
+          component='span'
+          display={{ xs: "none", sm: "block", md: "block" }}
+          m={1}
+        />
+        <Box
+          component='grid'
+          display={{ xs: "none", sm: "flex", md: "flex" }}
+          className={classes.bgText}
+        >
+          <Typography component='h4' variant='h4'>
+            Converse with anyone
+          </Typography>
+          <Typography component='h4' variant='h4'>
+            with any language
+          </Typography>
+        </Box>
+      </Grid>
+      <Grid item xs={12} sm={8} md={7} elevation={6} square>
+        <Grid item className={classes.registerContainer}>
+          <Typography>Already have an account?</Typography>
+          <Box component='span' m={1} />
+          <Button
+            component={Paper}
+            className={classes.registerBtn}
+            onClick={() => history.push("/register")}
+          >
+            Register
+          </Button>
         </Grid>
-        <form onSubmit={handleLogin}>
-          <Grid>
+        <Box component='span' m={1} />
+        <Box className={classes.formContainer}>
+          <form onSubmit={handleLogin}>
             <Grid>
-              <FormControl margin="normal" required>
-                <TextField
-                  aria-label="username"
-                  label="Username"
-                  name="username"
-                  type="text"
-                />
-              </FormControl>
+              <Grid item>
+                <Typography variant='h4'>Welcome Back!</Typography>
+              </Grid>
+              <Grid item>
+                <FormControl
+                  margin='normal'
+                  className={classes.formChildren}
+                  required
+                >
+                  <TextField
+                    aria-label='username'
+                    label='Username'
+                    name='username'
+                    type='text'
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item>
+                <FormControl
+                  margin='normal'
+                  className={classes.formChildren}
+                  required
+                >
+                  <TextField
+                    label='password'
+                    aria-label='password'
+                    type='password'
+                    name='password'
+                  />
+                </FormControl>
+              </Grid>
             </Grid>
-            <FormControl margin="normal" required>
-              <TextField
-                label="password"
-                aria-label="password"
-                type="password"
-                name="password"
-              />
-            </FormControl>
-            <Grid>
-              <Button type="submit" variant="contained" size="large">
-                Login
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </Box>
+          </form>
+        </Box>
+        <Box component='span' m={1} />
+        <Grid item className={classes.loginBtnContainer}>
+          <Button
+            type='submit'
+            className={classes.loginBtn}
+            variant='contained'
+            size='large'
+          >
+            Login
+          </Button>
+        </Grid>
+      </Grid>
     </Grid>
   );
 };
 
 const mapStateToProps = (state) => {
   return {
-    user: state.user,
+    user: state.user
   };
 };
 
@@ -76,7 +185,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     login: (credentials) => {
       dispatch(login(credentials));
-    },
+    }
   };
 };
 

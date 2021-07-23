@@ -11,7 +11,11 @@ router.post("/", async (req, res, next) => {
     const senderId = req.user.id;
     const { recipientId, text, sender } = req.body;
 
+<<<<<<< HEAD
     // find a conversation to get conversationId and also make sure it doesn't already exist
+=======
+    // if we don't have conversation id, find a conversation to make sure it doesn't already exist
+>>>>>>> Feature: Unread message counter
     let conversation = await Conversation.findConversation(
       senderId,
       recipientId
@@ -33,6 +37,47 @@ router.post("/", async (req, res, next) => {
       conversationId: conversation.id
     });
     res.json({ message, sender });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// expects {user id} of other user in conversation in request body
+// returns array of message ids of messages which updated read state to true
+router.post("/read", async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    const senderId = req.user.id;
+    const { otherUserId } = req.body;
+
+    let conversation = await Conversation.findConversation(
+      senderId,
+      otherUserId
+    );
+
+    if (!conversation) {
+      return res.sendStatus(404);
+    }
+
+    let updatedMessages = await Message.update(
+      { isRead: true },
+      {
+        where: {
+          senderId: otherUserId,
+          conversationId: conversation.id,
+          isRead: false
+        },
+        returning: true
+      }
+    );
+    if (updatedMessages[0]) {
+      let ids = updatedMessages[1].map((msg) => msg.id);
+      res.json({ updatedMessages: ids });
+    } else {
+      res.json({ updatedMessages: [] });
+    }
   } catch (error) {
     next(error);
   }

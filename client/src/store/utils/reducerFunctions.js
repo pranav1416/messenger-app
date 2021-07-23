@@ -93,6 +93,7 @@ export const addNewConvoToStore = (state, recipientId, message) => {
   });
 };
 
+<<<<<<< HEAD
 // function to add conversations in store
 // input args: conversations
 // return: coversations sorted in descending order
@@ -109,3 +110,75 @@ export const addConversationsToStore = (conversations) => {
   });
   return conversations;
 };
+=======
+// function to upadte conversations in state:
+// with converasationId update the messages for the user [IDs or complete message obj]
+export const updateReadMessagesToStore = (
+  state,
+  conversationId,
+  messageIds
+) => {
+  return state.map((convo) => {
+    if (convo.id === conversationId) {
+      const newConvo = { ...convo };
+      newConvo.messages.forEach((msg) => {
+        if (messageIds.includes(msg.id)) {
+          Object.assign(msg, { isRead: true });
+        }
+      });
+      return newConvo;
+    } else {
+      return convo;
+    }
+  });
+};
+
+// function to add conversations in store
+// input args: conversations
+// return: coversations sorted in descending order; also add unreadCount for each conversation
+export const addConversationsToStore = (conversations) => {
+  conversations
+    .sort((convo1, convo2) => {
+      let convo1Date = new Date(
+        convo1.messages[convo1.messages.length - 1].createdAt
+      );
+      let convo2Date = new Date(
+        convo2.messages[convo2.messages.length - 1].createdAt
+      );
+      if (convo1Date > convo2Date) return -1;
+      else return 1;
+    })
+    .forEach((convo) => {
+      let unreadCount = convo.messages.filter(
+        (msg) => msg.isRead === false
+      ).length;
+      Object.assign(convo, { unreadCount: unreadCount });
+    });
+  return conversations;
+};
+
+// function to update conversations present in store
+// input args: state
+// return: conversations sorted in descending order; update unreadCount for each conversation
+export const updateConversationsInStore = (state) => {
+  let newState = [...state];
+  newState
+    .sort((convo1, convo2) => {
+      let convo1Date = new Date(
+        convo1.messages[convo1.messages.length - 1].createdAt
+      );
+      let convo2Date = new Date(
+        convo2.messages[convo2.messages.length - 1].createdAt
+      );
+      if (convo1Date > convo2Date) return -1;
+      else return 1;
+    })
+    .forEach((convo) => {
+      let unreadCount = convo.messages.filter(
+        (msg) => msg.isRead === false
+      ).length;
+      Object.assign(convo, { unreadCount: unreadCount });
+    });
+  return newState;
+};
+>>>>>>> Feature: Unread message counter

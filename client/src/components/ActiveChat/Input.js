@@ -1,33 +1,43 @@
 import React, { Component } from "react";
-import { FormControl, FilledInput } from "@material-ui/core";
+import { FormControl, FilledInput, Box } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { postMessage } from "../../store/utils/thunkCreators";
+import {
+  postMessage,
+  updateMessageStatus
+} from "../../store/utils/thunkCreators";
 
 const styles = {
   root: {
     justifySelf: "flex-end",
-    marginTop: 15,
+    marginTop: 15
   },
   input: {
     height: 70,
     backgroundColor: "#F4F6FA",
     borderRadius: 8,
-    marginBottom: 20,
-  },
+    marginBottom: 20
+  }
 };
 
 class Input extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      text: "",
+      text: ""
     };
   }
 
+  handleClick = () => {
+    let conversation = this.props.conversations.find(
+      (conv) => conv.id === this.props.conversationId
+    );
+    this.props.updateMessageStatus(conversation);
+  };
+
   handleChange = (event) => {
     this.setState({
-      text: event.target.value,
+      text: event.target.value
     });
   };
 
@@ -38,29 +48,34 @@ class Input extends Component {
       text: event.target.text.value,
       recipientId: this.props.otherUser.id,
       conversationId: this.props.conversationId,
-      sender: this.props.conversationId ? null : this.props.user,
+      sender: this.props.conversationId ? null : this.props.user
     };
     await this.props.postMessage(reqBody);
     this.setState({
-      text: "",
+      text: ""
     });
   };
 
   render() {
     const { classes } = this.props;
     return (
-      <form className={classes.root} onSubmit={this.handleSubmit}>
-        <FormControl fullWidth hiddenLabel>
-          <FilledInput
-            classes={{ root: classes.input }}
-            disableUnderline
-            placeholder="Type something..."
-            value={this.state.text}
-            name="text"
-            onChange={this.handleChange}
-          />
-        </FormControl>
-      </form>
+      <Box onClick={() => this.handleClick}>
+        <form className={classes.root} onSubmit={this.handleSubmit}>
+          <FormControl fullWidth hiddenLabel>
+            <FilledInput
+              classes={{ root: classes.input }}
+              disableUnderline
+              placeholder='Type something...'
+              value={this.state.text}
+              name='text'
+              onChange={this.handleChange}
+              onClick={() => this.handleClick}
+              onFocus={() => this.handleClick}
+              autoFocus
+            />
+          </FormControl>
+        </form>
+      </Box>
     );
   }
 }
@@ -68,7 +83,7 @@ class Input extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    conversations: state.conversations,
+    conversations: state.conversations
   };
 };
 
@@ -77,6 +92,9 @@ const mapDispatchToProps = (dispatch) => {
     postMessage: (message) => {
       dispatch(postMessage(message));
     },
+    updateMessageStatus: (conversation) => {
+      dispatch(updateMessageStatus(conversation));
+    }
   };
 };
 

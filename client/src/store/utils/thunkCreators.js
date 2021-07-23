@@ -5,6 +5,8 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  setReadMessages,
+  updateConversations
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -87,15 +89,15 @@ const sendMessage = (data, body) => {
   socket.emit("new-message", {
     message: data.message,
     recipientId: body.recipientId,
-    sender: data.sender,
+    sender: data.sender
   });
 };
 
 // message format to send: {recipientId, text, conversationId}
 // conversationId will be set to null if its a brand new conversation
-export const postMessage = (body) => (dispatch) => {
+export const postMessage = (body) => async (dispatch) => {
   try {
-    const data = saveMessage(body);
+    const data = await saveMessage(body);
 
     if (!body.conversationId) {
       dispatch(addConversation(body.recipientId, data.message));
@@ -113,6 +115,33 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   try {
     const { data } = await axios.get(`/api/users/${searchTerm}`);
     dispatch(setSearchedUsers(data));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Function to update read status of messages
+// Input: conversation object
+export const updateMessageStatus = (conversation) => async (dispatch) => {
+  try {
+    // check if user is not sender for last message
+    // if user is not sender, then mark read for user's messages
+    let lastMessage = conversation.messages[conversation.messages.length - 1];
+    if (lastMessage.senderId === conversation.otherUser.id) {
+      // request will return message ids for the updated messages in the conversation
+      const { data } = await axios.post("/api/messages/read", {
+        otherUserId: conversation.otherUser.id
+      });
+      // if we get any updated messages then dispatch action to update those messages in the state
+      if (data.updatedMessages.length) {
+        // dispatch action to update read status of messages in the state
+        await dispatch(setReadMessages(conversation.id, data.updatedMessages));
+        // disaptch action to update conversations
+        dispatch(updateConversations());
+      }
+    } else {
+      console.log("sender is user");
+    }
   } catch (error) {
     console.error(error);
   }

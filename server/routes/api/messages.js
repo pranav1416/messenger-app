@@ -9,13 +9,8 @@ router.post("/", async (req, res, next) => {
       return res.sendStatus(401);
     }
     const senderId = req.user.id;
-    const { recipientId, text, conversationId, sender } = req.body;
+    const { recipientId, text, sender } = req.body;
 
-    // if we already know conversation id, we can save time and just add it to message and return
-    if (conversationId) {
-      const message = await Message.create({ senderId, text, conversationId });
-      return res.json({ message, sender });
-    }
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist
     let conversation = await Conversation.findConversation(
       senderId,
@@ -26,7 +21,7 @@ router.post("/", async (req, res, next) => {
       // create conversation
       conversation = await Conversation.create({
         user1Id: senderId,
-        user2Id: recipientId,
+        user2Id: recipientId
       });
       if (onlineUsers.includes(sender.id)) {
         sender.online = true;
@@ -35,9 +30,50 @@ router.post("/", async (req, res, next) => {
     const message = await Message.create({
       senderId,
       text,
-      conversationId: conversation.id,
+      conversationId: conversation.id
     });
     res.json({ message, sender });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// expects {user id} of other user in conversation in request body
+// returns array of message ids of messages which updated read state to true
+router.post("/read", async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    const senderId = req.user.id;
+    const { otherUserId } = req.body;
+
+    let conversation = await Conversation.findConversation(
+      senderId,
+      otherUserId
+    );
+
+    if (!conversation) {
+      return res.sendStatus(404);
+    }
+
+    let updatedMessages = await Message.update(
+      { isRead: true },
+      {
+        where: {
+          senderId: otherUserId,
+          conversationId: conversation.id,
+          isRead: false
+        },
+        returning: true
+      }
+    );
+    if (updatedMessages[0]) {
+      let ids = updatedMessages[1].map((msg) => msg.id);
+      res.json({ updatedMessages: ids });
+    } else {
+      res.json({ updatedMessages: [] });
+    }
   } catch (error) {
     next(error);
   }

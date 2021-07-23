@@ -4,6 +4,9 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
+  updateReadMessagesToStore,
+  addConversationsToStore,
+  updateConversationsInStore
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -15,47 +18,49 @@ const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
+const SET_READ_MESSAGES = "SET_READ_MESSAGES";
+const UPDATE_CONVERSATIONS = "UPDATE_CONVERSATIONS";
 
 // ACTION CREATORS
 
 export const gotConversations = (conversations) => {
   return {
     type: GET_CONVERSATIONS,
-    conversations,
+    conversations
   };
 };
 
 export const setNewMessage = (message, sender) => {
   return {
     type: SET_MESSAGE,
-    payload: { message, sender: sender || null },
+    payload: { message, sender: sender || null }
   };
 };
 
 export const addOnlineUser = (id) => {
   return {
     type: ADD_ONLINE_USER,
-    id,
+    id
   };
 };
 
 export const removeOfflineUser = (id) => {
   return {
     type: REMOVE_OFFLINE_USER,
-    id,
+    id
   };
 };
 
 export const setSearchedUsers = (users) => {
   return {
     type: SET_SEARCHED_USERS,
-    users,
+    users
   };
 };
 
 export const clearSearchedUsers = () => {
   return {
-    type: CLEAR_SEARCHED_USERS,
+    type: CLEAR_SEARCHED_USERS
   };
 };
 
@@ -63,7 +68,24 @@ export const clearSearchedUsers = () => {
 export const addConversation = (recipientId, newMessage) => {
   return {
     type: ADD_CONVERSATION,
-    payload: { recipientId, newMessage },
+    payload: { recipientId, newMessage }
+  };
+};
+
+// action to set read message
+// reducer will call function in reducerFunction to update state with updated messages for the conversation
+export const setReadMessages = (conversationId, messageIds) => {
+  return {
+    type: SET_READ_MESSAGES,
+    payload: { conversationId, messageIds }
+  };
+};
+
+// action to update conversations in store
+// sort with latest message, check unread count and update
+export const updateConversations = () => {
+  return {
+    type: UPDATE_CONVERSATIONS
   };
 };
 
@@ -72,7 +94,7 @@ export const addConversation = (recipientId, newMessage) => {
 const reducer = (state = [], action) => {
   switch (action.type) {
     case GET_CONVERSATIONS:
-      return action.conversations;
+      return addConversationsToStore(action.conversations);
     case SET_MESSAGE:
       return addMessageToStore(state, action.payload);
     case ADD_ONLINE_USER: {
@@ -91,6 +113,14 @@ const reducer = (state = [], action) => {
         action.payload.recipientId,
         action.payload.newMessage
       );
+    case SET_READ_MESSAGES:
+      return updateReadMessagesToStore(
+        state,
+        action.payload.conversationId,
+        action.payload.messageIds
+      );
+    case UPDATE_CONVERSATIONS:
+      return updateConversationsInStore(state);
     default:
       return state;
   }

@@ -38,14 +38,18 @@ export const addMessageToStore = (state, payload) => {
       }
     })
     .sort((convo1, convo2) => {
-      let convo1Date = new Date(
-        convo1.messages[convo1.messages.length - 1].createdAt
-      );
-      let convo2Date = new Date(
-        convo2.messages[convo2.messages.length - 1].createdAt
-      );
-      if (convo1Date > convo2Date) return -1;
-      else return 1;
+      if (convo1 && convo2) {
+        let convo1Date = new Date(
+          convo1.messages[convo1.messages.length - 1].createdAt
+        );
+        let convo2Date = new Date(
+          convo2.messages[convo2.messages.length - 1].createdAt
+        );
+        if (convo1Date > convo2Date) return -1;
+        else return 1;
+      } else {
+        return -1;
+      }
     });
 };
 
@@ -153,7 +157,7 @@ export const addConversationsToStore = (conversations) => {
         if (convo1Date > convo2Date) return -1;
         else return 1;
       } else {
-        return;
+        return -1;
       }
     })
     .forEach((convo) => {

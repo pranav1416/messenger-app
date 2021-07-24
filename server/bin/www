@@ -56,6 +56,15 @@ io.on("connection", (socket) => {
       socket.broadcast.emit("remove-offline-user", id);
     }
   });
+
+  socket.on("read-message", (data) => {
+    // emits only to intended user if the user is online
+    if (onlineUsers[data.recipientId])
+      socket.to(onlineUsers[data.recipientId]).emit("read-message", {
+        conversationId: data.conversationId,
+        messageIds: data.messageIds
+      });
+  });
 });
 
 sessionStore

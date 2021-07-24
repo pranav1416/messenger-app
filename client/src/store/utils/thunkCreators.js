@@ -119,6 +119,13 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
+const readMessage = (conversation, data) => {
+  socket.emit("read-message", {
+    conversationId: conversation.id,
+    recipientId: conversation.otherUser.id,
+    messageIds: data.updatedMessages
+  });
+};
 /**
  * function to update read status of messages
  * @param conversations
@@ -138,6 +145,8 @@ export const updateMessageStatus = (conversation) => async (dispatch) => {
       if (data.updatedMessages.length) {
         // dispatch action to update read status of messages in the state
         await dispatch(setReadMessages(conversation.id, data.updatedMessages));
+        // emit read message on sockets
+        readMessage(conversation, data);
       }
     }
   } catch (error) {

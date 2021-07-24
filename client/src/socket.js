@@ -23,6 +23,10 @@ socket.on("connect", () => {
     await store.dispatch(setNewMessage(data.message, data.sender));
     store.dispatch(updateConversations());
   });
+
+  socket.on("read-message", (data) => {
+    store.dispatch(setReadMessages(data.conversationId, data.messageIds));
+  });
 });
 
 export default socket;

@@ -36,7 +36,10 @@ const ChatContent = ({ conversation }) => {
         <Typography
           className={
             (classes.previewText,
-            conversation.unreadCount && conversation.otherUser.id === userId
+            conversation.unreadCount &&
+            conversation.messages.length &&
+            conversation.messages[conversation.messages.length - 1].senderId !==
+              userId
               ? classes.unreadMessage
               : null)
           }

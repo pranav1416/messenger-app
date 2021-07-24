@@ -9,14 +9,9 @@ router.post("/", async (req, res, next) => {
       return res.sendStatus(401);
     }
     const senderId = req.user.id;
-    const { recipientId, text, conversationId, sender } = req.body;
+    const { recipientId, text, sender } = req.body;
 
-    // if we already know conversation id, we can save time and just add it to message and return
-    if (conversationId) {
-      const message = await Message.create({ senderId, text, conversationId });
-      return res.json({ message, sender });
-    }
-    // if we don't have conversation id, find a conversation to make sure it doesn't already exist
+    // find a conversation to get conversationId and also make sure it doesn't already exist
     let conversation = await Conversation.findConversation(
       senderId,
       recipientId
@@ -26,7 +21,7 @@ router.post("/", async (req, res, next) => {
       // create conversation
       conversation = await Conversation.create({
         user1Id: senderId,
-        user2Id: recipientId,
+        user2Id: recipientId
       });
       if (onlineUsers.includes(sender.id)) {
         sender.online = true;
@@ -35,7 +30,7 @@ router.post("/", async (req, res, next) => {
     const message = await Message.create({
       senderId,
       text,
-      conversationId: conversation.id,
+      conversationId: conversation.id
     });
     res.json({ message, sender });
   } catch (error) {

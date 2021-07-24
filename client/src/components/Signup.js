@@ -19,7 +19,7 @@ import Paper from "@material-ui/core/Paper";
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
     height: "100vh",
-    fontFamily: "OpenSans"
+    fontFamily: theme.typography.fontFamily
   },
   loginContainer: {
     display: "flex",
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "2vh 5vw 0 0"
   },
   loginBtn: {
-    color: "#3A8DFF"
+    color: theme.palette.primary.main
   },
   createBtnContainer: {
     display: "flex",
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
   createBtn: {
     color: "white",
-    backgroundColor: "#3A8DFF"
+    backgroundColor: theme.palette.primary.main
   },
   formContainer: {
     display: "flex",

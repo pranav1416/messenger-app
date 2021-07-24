@@ -18,7 +18,7 @@ import {
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
     height: "100vh",
-    fontFamily: "OpenSans"
+    fontFamily: theme.typography.fontFamily
   },
   registerContainer: {
     display: "flex",
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "2vh 5vw 0 0"
   },
   registerBtn: {
-    color: "#3A8DFF"
+    color: theme.palette.primary.main
   },
   loginBtnContainer: {
     display: "flex",
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
   loginBtn: {
     color: "white",
-    backgroundColor: "#3A8DFF",
+    backgroundColor: theme.palette.primary.main,
     alignSelf: "center"
   },
   formContainer: {

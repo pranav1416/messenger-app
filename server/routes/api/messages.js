@@ -11,11 +11,7 @@ router.post("/", async (req, res, next) => {
     const senderId = req.user.id;
     const { recipientId, text, sender } = req.body;
 
-<<<<<<< HEAD
     // find a conversation to get conversationId and also make sure it doesn't already exist
-=======
-    // if we don't have conversation id, find a conversation to make sure it doesn't already exist
->>>>>>> Feature: Unread message counter
     let conversation = await Conversation.findConversation(
       senderId,
       recipientId
@@ -27,7 +23,7 @@ router.post("/", async (req, res, next) => {
         user1Id: senderId,
         user2Id: recipientId
       });
-      if (onlineUsers.includes(sender.id)) {
+      if (onlineUsers[sender.id]) {
         sender.online = true;
       }
     }

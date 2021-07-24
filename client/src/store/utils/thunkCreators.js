@@ -5,8 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
-  setReadMessages,
-  updateConversations
+  setReadMessages
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -120,8 +119,11 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
-// Function to update read status of messages
-// Input: conversation object
+/**
+ * function to update read status of messages
+ * @param conversations
+ * @returns null
+ */
 export const updateMessageStatus = (conversation) => async (dispatch) => {
   try {
     // check if user is not sender for last message
@@ -136,11 +138,7 @@ export const updateMessageStatus = (conversation) => async (dispatch) => {
       if (data.updatedMessages.length) {
         // dispatch action to update read status of messages in the state
         await dispatch(setReadMessages(conversation.id, data.updatedMessages));
-        // disaptch action to update conversations
-        dispatch(updateConversations());
       }
-    } else {
-      console.log("sender is user");
     }
   } catch (error) {
     console.error(error);

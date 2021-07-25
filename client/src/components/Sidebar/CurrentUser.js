@@ -3,7 +3,8 @@ import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { BadgeAvatar } from "./index";
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+
+import UserMenu from "./UserMenu";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -24,17 +25,11 @@ const useStyles = makeStyles(() => ({
     fontSize: 16,
     fontWeight: "bold",
     marginLeft: 17
-  },
-  ellipsis: {
-    color: "#95A7C4",
-    marginRight: 24,
-    opacity: 0.5
   }
 }));
 
 const CurrentUser = (props) => {
   const classes = useStyles();
-
   const user = props.user || {};
 
   return (
@@ -42,7 +37,7 @@ const CurrentUser = (props) => {
       <BadgeAvatar photoUrl={user.photoUrl} online={true} />
       <Box className={classes.subContainer}>
         <Typography className={classes.username}>{user.username}</Typography>
-        <MoreHorizIcon classes={{ root: classes.ellipsis }} />
+        <UserMenu />
       </Box>
     </Box>
   );

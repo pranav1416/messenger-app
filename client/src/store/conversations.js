@@ -6,9 +6,8 @@ import {
   addMessageToStore,
   updateReadMessagesToStore,
   addConversationsToStore,
-  updateConversationsInStore
+  updateTypingStatusInStore
 } from "./utils/reducerFunctions";
-
 // ACTIONS
 
 const GET_CONVERSATIONS = "GET_CONVERSATIONS";
@@ -19,7 +18,7 @@ const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
 const SET_READ_MESSAGES = "SET_READ_MESSAGES";
-const UPDATE_CONVERSATIONS = "UPDATE_CONVERSATIONS";
+const SET_TYPING_STATUS = "SET_TYPING_STATUS";
 
 // ACTION CREATORS
 
@@ -73,7 +72,6 @@ export const addConversation = (recipientId, newMessage) => {
 };
 
 // action to set read message
-// reducer will call function in reducerFunction to update state with updated messages for the conversation
 export const setReadMessages = (conversationId, messageIds) => {
   return {
     type: SET_READ_MESSAGES,
@@ -81,11 +79,11 @@ export const setReadMessages = (conversationId, messageIds) => {
   };
 };
 
-// action to update conversations in store
-// sort with latest message, check unread count and update
-export const updateConversations = () => {
+// action to set Typing status of a conversation with online users
+export const setTypingStatus = (conversationId, typing) => {
   return {
-    type: UPDATE_CONVERSATIONS
+    type: SET_TYPING_STATUS,
+    payload: { conversationId, typing }
   };
 };
 
@@ -119,8 +117,8 @@ const reducer = (state = [], action) => {
         action.payload.conversationId,
         action.payload.messageIds
       );
-    case UPDATE_CONVERSATIONS:
-      return updateConversationsInStore(state);
+    case SET_TYPING_STATUS:
+      return updateTypingStatusInStore(state, action.payload);
     default:
       return state;
   }

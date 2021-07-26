@@ -20,7 +20,6 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-// class Chat extends Component {
 const Chat = ({ conversation }) => {
   const classes = useStyles();
   const otherUser = conversation.otherUser;
@@ -40,7 +39,12 @@ const Chat = ({ conversation }) => {
         online={otherUser.online}
         sidebar={true}
       />
-      <ChatContent conversation={conversation} />
+      <ChatContent
+        conversation={conversation}
+        // check this
+        userId={userId}
+        typing={typing}
+      />
     </Box>
   );
 };

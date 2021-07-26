@@ -29,6 +29,7 @@ class Chat extends Component {
   render() {
     const { classes, userId } = this.props;
     const otherUser = this.props.conversation.otherUser;
+    let typing = Boolean(this.props.conversation.typing);
     return (
       <Box
         onClick={() => this.handleClick(this.props.conversation)}
@@ -40,7 +41,11 @@ class Chat extends Component {
           online={otherUser.online}
           sidebar={true}
         />
-        <ChatContent conversation={this.props.conversation} userId={userId} />
+        <ChatContent
+          conversation={this.props.conversation}
+          userId={userId}
+          typing={typing}
+        />
       </Box>
     );
   }

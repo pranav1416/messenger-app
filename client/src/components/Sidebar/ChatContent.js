@@ -14,18 +14,29 @@ const useStyles = makeStyles((theme) => ({
     letterSpacing: -0.2
   },
   previewText: {
-    fontSize: 12,
     color: "#9CADC8",
+    fontSize: 14,
     letterSpacing: -0.17
   },
   unreadMessage: {
     fontWeight: "bold"
+  },
+  typingText: {
+    fontStyle: "italic",
+    fontSize: 14,
+    color: "#9CADC8"
+  },
+  typingUnreadText: {
+    fontStyle: "italic",
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#9CADC8"
   }
 }));
 
 const ChatContent = (props) => {
   const classes = useStyles();
-  const { conversation, userId } = props;
+  const { conversation, userId, typing } = props;
   const { latestMessageText, otherUser } = conversation;
 
   return (
@@ -36,16 +47,24 @@ const ChatContent = (props) => {
         </Typography>
         <Typography
           className={
-            (classes.previewText,
             conversation.unreadCount &&
+            conversation.messages &&
             conversation.messages.length &&
             conversation.messages[conversation.messages.length - 1].senderId !==
               userId
-              ? classes.unreadMessage
-              : null)
+              ? typing
+                ? classes.typingUnreadText
+                : classes.unreadMessage
+              : typing
+              ? classes.typingText
+              : classes.previewText
           }
         >
-          {latestMessageText}
+          {typing
+            ? "Typing..."
+            : latestMessageText && latestMessageText.length > 15
+            ? String(latestMessageText).substring(0, 12) + "..."
+            : latestMessageText}
         </Typography>
       </Box>
       <Badge

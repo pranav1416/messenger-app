@@ -65,6 +65,14 @@ io.on("connection", (socket) => {
         messageIds: data.messageIds
       });
   });
+
+  socket.on("typing-status-update", (data) => {
+    if (onlineUsers[data.recipientId])
+      socket.to(onlineUsers[data.recipientId]).emit("typing-status", {
+        conversationId: data.conversationId,
+        typing: data.typing
+      });
+  });
 });
 
 sessionStore

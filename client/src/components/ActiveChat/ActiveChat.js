@@ -8,13 +8,15 @@ const useStyles = makeStyles(() => ({
   root: {
     display: "flex",
     flexGrow: 8,
-    flexDirection: "column"
+    flexDirection: "column",
+    maxHeight: "97vh"
   },
   chatContainer: {
-    marginLeft: 41,
-    marginRight: 41,
+    // paddingLeft: 5,
+    // paddingRight: 5,
     display: "flex",
     flexDirection: "column",
+    maxHeight: "75vh",
     flexGrow: 1,
     justifyContent: "space-between"
   }
@@ -38,10 +40,12 @@ const ActiveChat = (props) => {
               messages={conversation.messages}
               otherUser={conversation.otherUser}
               userId={user.id}
+              typing={Boolean(conversation.typing)}
             />
             <Input
               otherUser={conversation.otherUser}
               conversationId={conversation.id}
+              typing={Boolean(conversation.typing)}
               user={user}
             />
           </Box>

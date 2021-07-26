@@ -4,13 +4,16 @@ import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import {
   postMessage,
-  updateMessageStatus
+  updateMessageStatus,
+  updateTypingStatus
 } from "../../store/utils/thunkCreators";
 
 const styles = {
   root: {
     justifySelf: "flex-end",
-    marginTop: 15
+    marginTop: 15,
+    marginLeft: 41,
+    marginRight: 41
   },
   input: {
     height: 70,
@@ -24,7 +27,9 @@ class Input extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      text: ""
+      text: "",
+      typing: false,
+      timeout: undefined
     };
   }
 
@@ -43,16 +48,56 @@ class Input extends Component {
 
   handleSubmit = async (event) => {
     event.preventDefault();
-    // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
-    const reqBody = {
-      text: event.target.text.value,
-      recipientId: this.props.otherUser.id,
+    if (this.state.text) {
+      // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
+      const reqBody = {
+        text: event.target.text.value,
+        recipientId: this.props.otherUser.id,
+        conversationId: this.props.conversationId,
+        sender: this.props.conversationId ? null : this.props.user
+      };
+      await this.props.postMessage(reqBody);
+      this.setState({
+        text: ""
+      });
+    }
+  };
+
+  handleKeyPress = async (event) => {
+    const emitData = {
       conversationId: this.props.conversationId,
-      sender: this.props.conversationId ? null : this.props.user
+      otherUserId: this.props.otherUser.id,
+      typing: true
     };
-    await this.props.postMessage(reqBody);
-    this.setState({
-      text: ""
+    if (event.keyCode === 13) {
+      this.setState({ typing: false });
+      this.props.updateTypingStatus({
+        conversationId: this.props.conversationId,
+        otherUserId: this.props.otherUser.id,
+        typing: false
+      });
+    } else {
+      if (!this.state.typing) {
+        this.setState({ typing: true });
+        await this.props.updateTypingStatus(emitData);
+        this.setState({
+          timeout: setTimeout(this.handleTimeout, 1500)
+        });
+      } else {
+        this.setState({ timeout: clearTimeout(this.state.timeout) });
+        this.setState({
+          timeout: setTimeout(this.handleTimeout, 1500)
+        });
+      }
+    }
+  };
+
+  handleTimeout = () => {
+    this.setState({ typing: false });
+    this.props.updateTypingStatus({
+      conversationId: this.props.conversationId,
+      otherUserId: this.props.otherUser.id,
+      typing: false
     });
   };
 
@@ -69,8 +114,8 @@ class Input extends Component {
               value={this.state.text}
               name='text'
               onChange={this.handleChange}
-              onClick={() => this.handleClick}
-              onFocus={() => this.handleClick}
+              onClick={this.handleClick}
+              onKeyDown={this.handleKeyPress}
               autoFocus
             />
           </FormControl>
@@ -94,6 +139,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     updateMessageStatus: (conversation) => {
       dispatch(updateMessageStatus(conversation));
+    },
+    updateTypingStatus: (data) => {
+      dispatch(updateTypingStatus(data));
     }
   };
 };

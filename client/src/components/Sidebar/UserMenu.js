@@ -4,7 +4,6 @@ import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/utils/thunkCreators";
-import { clearOnLogout } from "../../store/index";
 
 const useStyles = makeStyles(() => ({
   ellipsis: {
@@ -31,7 +30,6 @@ const UserMenu = () => {
   const handleLogout = async () => {
     handleClose();
     await dispatch(logout(user.id));
-    dispatch(clearOnLogout());
   };
 
   return (

@@ -7,7 +7,8 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     marginLeft: 20,
-    flexGrow: 1
+    flexGrow: 1,
+    width: "100%"
   },
   username: {
     fontWeight: "bold",
@@ -31,6 +32,11 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 14,
     fontWeight: "bold",
     color: "#9CADC8"
+  },
+  badge: {
+    alignSelf: "center",
+    marginRight: 10,
+    justifyContent: "flex-end"
   }
 }));
 
@@ -41,7 +47,7 @@ const ChatContent = ({ conversation }) => {
 
   return (
     <Box className={classes.root}>
-      <Box>
+      <Box className={classes.chatContent}>
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
@@ -67,11 +73,9 @@ const ChatContent = ({ conversation }) => {
             : latestMessageText}
         </Typography>
       </Box>
-      <Badge
-        color='primary'
-        badgeContent={conversation.unreadCount}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      />
+      <Box className={classes.badge}>
+        <Badge color='primary' badgeContent={conversation.unreadCount} />
+      </Box>
     </Box>
   );
 };

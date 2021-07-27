@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { SenderBubble, OtherUserBubble } from "../ActiveChat";
@@ -9,13 +9,12 @@ const useStyles = makeStyles(() => ({
   messagesContainer: {
     display: "flex",
     flexDirection: "column",
-    overflowX: "hidden",
-    overflowY: "auto"
-  },
-  messages: {
     flexGrow: 1,
     marginRight: 41,
     marginLeft: 41
+  },
+  messages: {
+    flexGrow: 1
   },
   typingStatus: {
     alignSelf: "bottom"
@@ -36,6 +35,17 @@ const Messages = ({ messages, otherUser, userId, typing }) => {
       }
     }
   };
+
+  const latestPosition = useRef(null);
+
+  const setScrollPosition = () => {
+    latestPosition.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    setScrollPosition();
+  }, [messages, typing]);
+
   useEffect(() => {
     setLastReadMessageId(getLastReadMessageId(messages, otherUser));
   });
@@ -66,6 +76,7 @@ const Messages = ({ messages, otherUser, userId, typing }) => {
       <Box className={classes.typingStatus}>
         <TypingIndicator otherUser={otherUser} typing={typing} />
       </Box>
+      <Box ref={latestPosition} />
     </Box>
   );
 };

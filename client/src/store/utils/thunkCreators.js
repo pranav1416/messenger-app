@@ -130,31 +130,19 @@ const readMessage = (conversation, data) => {
   });
 };
 
-/**
- * function to update read status of messages
- * @param conversations
- * @returns null
- */
 export const updateMessageStatus = (conversation) => async (dispatch) => {
   try {
-    // check if user is not sender for last message
-    // if user is not sender, then mark read for user's messages
     if (conversation.messages.length) {
-      let lastMessage = conversation.messages[conversation.messages.length - 1];
-      if (lastMessage.senderId === conversation.otherUser.id) {
-        // request will return message ids for the updated messages in the conversation
-        const { data } = await axios.post("/api/messages/read", {
-          otherUserId: conversation.otherUser.id
-        });
-        // if we get any updated messages then dispatch action to update those messages in the state
-        if (data.updatedMessages.length) {
-          // dispatch action to update read status of messages in the state
-          await dispatch(
-            setReadMessages(conversation.id, data.updatedMessages)
-          );
-          // emit read message on sockets
-          readMessage(conversation, data);
-        }
+      // request will return message ids for the updated messages in the conversation
+      const { data } = await axios.patch("/api/messages/read", {
+        otherUserId: conversation.otherUser.id
+      });
+
+      if (data.updatedMessages.length) {
+        // dispatch action to update read status of messages in the state
+        await dispatch(setReadMessages(conversation.id, data.updatedMessages));
+        // emit read message on sockets
+        readMessage(conversation, data);
       }
     } else {
       console.log("sender is user");

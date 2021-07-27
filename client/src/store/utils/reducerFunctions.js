@@ -145,9 +145,11 @@ export const updateReadMessagesToStore = (
   });
 };
 
-// function to add conversations in store
-// input args: conversations
-// return: coversations sorted in descending order; also add unreadCount for each conversation
+/**
+ * function to add conversations in store
+ * @param conversations
+ * @returns coversations sorted in descending order; also add unreadCount for each conversation
+ */
 export const addConversationsToStore = (conversations) => {
   conversations
     .sort((convo1, convo2) => sortConversations(convo1, convo2))
@@ -158,11 +160,16 @@ export const addConversationsToStore = (conversations) => {
   return conversations;
 };
 
+/**
+ * function to add conversations in store
+ * @param state,data
+ * @returns updates typing status of other user in store
+ */
 export const updateTypingStatusInStore = (state, data) => {
   return state.map((convo) => {
     if (convo.id === data.conversationId) {
       let newConvo = { ...convo };
-      newConvo.typing = data.typing;
+      newConvo.typing = Boolean(data.typing);
       return newConvo;
     } else {
       return convo;

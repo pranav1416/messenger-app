@@ -54,11 +54,8 @@ const ActiveChat = (props) => {
             <Input
               otherUser={conversation.otherUser}
               conversationId={conversation.id}
-<<<<<<< HEAD
-=======
               typing={Boolean(conversation.typing)}
               user={user}
->>>>>>> Feature: Added typing status indicator and improvements
             />
           </Box>
         </>

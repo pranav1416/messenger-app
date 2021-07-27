@@ -42,7 +42,6 @@ const SenderBubble = (props) => {
         <Typography className={classes.text}>{text}</Typography>
       </Box>
       {lastMessage && (
-        // <Typography className={classes.date}>{"Read"}</Typography>
         <Avatar
           alt={otherUser.username}
           src={otherUser.photoUrl}

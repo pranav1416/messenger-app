@@ -38,9 +38,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-// expects {user id} of other user in conversation in request body
-// returns array of message ids of messages which updated read state to true
-router.post("/read", async (req, res, next) => {
+router.patch("/read", async (req, res, next) => {
   try {
     if (!req.user) {
       return res.sendStatus(401);
@@ -53,26 +51,37 @@ router.post("/read", async (req, res, next) => {
       otherUserId
     );
 
-    if (!conversation) {
-      return res.sendStatus(404);
-    }
-
-    let updatedMessages = await Message.update(
-      { isRead: true },
-      {
+    if (conversation) {
+      let latestMessage = await Message.findAll({
+        limit: 1,
         where: {
-          senderId: otherUserId,
-          conversationId: conversation.id,
-          isRead: false
+          conversationId: conversation.id
         },
-        returning: true
+        order: [["createdAt", "DESC"]]
+      });
+      if (latestMessage[0].senderId !== senderId) {
+        let updatedMessages = await Message.update(
+          { isRead: true },
+          {
+            where: {
+              senderId: otherUserId,
+              conversationId: conversation.id,
+              isRead: false
+            },
+            returning: true
+          }
+        );
+        if (updatedMessages[0]) {
+          let ids = updatedMessages[1].map((msg) => msg.id);
+          res.json({ updatedMessages: ids });
+        } else {
+          res.json({ updatedMessages: [] });
+        }
+      } else {
+        res.json({ updatedMessages: [] });
       }
-    );
-    if (updatedMessages[0]) {
-      let ids = updatedMessages[1].map((msg) => msg.id);
-      res.json({ updatedMessages: ids });
     } else {
-      res.json({ updatedMessages: [] });
+      return res.sendStatus(404);
     }
   } catch (error) {
     next(error);

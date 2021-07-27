@@ -63,7 +63,6 @@ const Login = (props) => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    console.log("handleLogin");
     const username = event.target.username.value;
     const password = event.target.password.value;
     if (username && password) {

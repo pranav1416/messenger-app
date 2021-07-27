@@ -24,6 +24,7 @@ const useStyles = makeStyles(() => ({
 const Messages = ({ messages, otherUser, userId, typing }) => {
   const [lastReadMessageId, setLastReadMessageId] = useState(null);
   const classes = useStyles();
+  const latestPosition = useRef(null);
 
   const getLastReadMessageId = (messages, otherUser) => {
     for (let idx = messages.length - 1; idx >= 0; idx--) {
@@ -35,8 +36,6 @@ const Messages = ({ messages, otherUser, userId, typing }) => {
       }
     }
   };
-
-  const latestPosition = useRef(null);
 
   const setScrollPosition = () => {
     latestPosition.current?.scrollIntoView({ behavior: "smooth" });

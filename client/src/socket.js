@@ -4,7 +4,6 @@ import {
   setNewMessage,
   removeOfflineUser,
   addOnlineUser,
-  updateConversations,
   setReadMessages,
   setTypingStatus
 } from "./store/conversations";

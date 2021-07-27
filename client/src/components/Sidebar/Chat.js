@@ -23,6 +23,7 @@ const useStyles = makeStyles(() => ({
 const Chat = ({ conversation }) => {
   const classes = useStyles();
   const otherUser = conversation.otherUser;
+  const typing = conversation.typing;
 
   const dispatch = useDispatch();
 
@@ -42,7 +43,7 @@ const Chat = ({ conversation }) => {
       <ChatContent
         conversation={conversation}
         // check this
-        userId={userId}
+        // userId={userId}
         typing={typing}
       />
     </Box>

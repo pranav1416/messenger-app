@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormControl, FilledInput } from "@material-ui/core";
+import { FormControl, FilledInput, Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -30,7 +30,7 @@ const Input = ({ otherUser, conversationId }) => {
   const classes = useStyles();
   const user = useSelector((state) => state.user);
   const conversation = useSelector((state) =>
-    state.conversations.find((conv) => conv.id === this.props.conversationId)
+    state.conversations.find((conv) => conv.id === conversationId)
   );
   const dispatch = useDispatch();
 
@@ -88,8 +88,8 @@ const Input = ({ otherUser, conversationId }) => {
     setTyping(false);
     dispatch(
       updateTypingStatus({
-        conversationId: this.props.conversationId,
-        otherUserId: this.props.otherUser.id,
+        conversationId: conversationId,
+        otherUserId: otherUser.id,
         typing: false
       })
     );

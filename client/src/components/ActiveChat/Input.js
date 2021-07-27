@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { FormControl, FilledInput } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
-import { connect } from "react-redux";
+
+import { makeStyles } from "@material-ui/core/styles";
+import { useDispatch, useSelector } from "react-redux";
 import { postMessage } from "../../store/utils/thunkCreators";
 
-const styles = {
+const useStyles = makeStyles((theme) => ({
   root: {
     justifySelf: "flex-end",
     marginTop: 15
@@ -15,25 +16,28 @@ const styles = {
     borderRadius: 8,
     marginBottom: 20
   }
-};
+}));
 
-const Input = (props) => {
+const Input = ({ otherUser, conversationId }) => {
   const [text, setText] = useState("");
+  const classes = useStyles();
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const handleChange = (event) => {
     setText(event.target.value);
   };
-  const { classes } = props;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     // add sender user info if posting to a brand new convo, so that the other user will have access to username, profile pic, etc.
     const reqBody = {
       text: text,
-      recipientId: props.otherUser.id,
-      conversationId: props.conversationId,
-      sender: props.conversationId ? null : props.user
+      recipientId: otherUser.id,
+      conversationId: conversationId,
+      sender: conversationId ? null : user
     };
-    await props.postMessage(reqBody);
+    dispatch(postMessage(reqBody));
     setText("");
   };
 
@@ -53,22 +57,4 @@ const Input = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user,
-    conversations: state.conversations
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    postMessage: (message) => {
-      dispatch(postMessage(message));
-    }
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(Input));
+export default Input;

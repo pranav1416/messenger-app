@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { IconButton, Menu, MenuItem } from "@material-ui/core";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../store/utils/thunkCreators";
 import { clearOnLogout } from "../../store/index";
 
@@ -13,11 +13,12 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const UserMenu = (props) => {
+const UserMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const open = Boolean(anchorEl);
-  const logout = "Logout";
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -29,7 +30,8 @@ const UserMenu = (props) => {
 
   const handleLogout = async () => {
     handleClose();
-    await props.logout(props.user.id);
+    await dispatch(logout(user.id));
+    dispatch(clearOnLogout());
   };
 
   return (
@@ -49,7 +51,7 @@ const UserMenu = (props) => {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem key={logout} onClick={handleLogout}>
+        <MenuItem key={"logout"} onClick={handleLogout}>
           Logout
         </MenuItem>
       </Menu>
@@ -57,18 +59,4 @@ const UserMenu = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user
-  };
-};
-const mapDispatchToProps = (dispatch) => {
-  return {
-    logout: (id) => {
-      dispatch(logout(id));
-      dispatch(clearOnLogout());
-    }
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserMenu);
+export default UserMenu;

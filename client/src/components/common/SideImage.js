@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const SideImage = (props) => {
+const SideImage = () => {
   const classes = useStyles();
   return (
     <Grid item sm={4} md={5} className={classes.bgContainer}>

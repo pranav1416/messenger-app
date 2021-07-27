@@ -16,8 +16,8 @@ router.get("/", async (req, res, next) => {
       where: {
         [Op.or]: {
           user1Id: userId,
-          user2Id: userId,
-        },
+          user2Id: userId
+        }
       },
       attributes: ["id"],
       order: [[Message, "createdAt", "ASC"]],
@@ -28,19 +28,19 @@ router.get("/", async (req, res, next) => {
           as: "user1",
           where: {
             id: {
-              [Op.not]: userId,
-            },
+              [Op.not]: userId
+            }
           },
           attributes: ["id", "username", "photoUrl"],
-          required: false,
+          required: false
         },
         {
           model: User,
           as: "user2",
           where: {
             id: {
-              [Op.not]: userId,
-            },
+              [Op.not]: userId
+            }
           },
           attributes: ["id", "username", "photoUrl"],
           required: false
@@ -62,7 +62,7 @@ router.get("/", async (req, res, next) => {
       }
 
       // set property for online status of the other user
-      if (onlineUsers.includes(convoJSON.otherUser.id)) {
+      if (onlineUsers[convoJSON.otherUser.id]) {
         convoJSON.otherUser.online = true;
       } else {
         convoJSON.otherUser.online = false;

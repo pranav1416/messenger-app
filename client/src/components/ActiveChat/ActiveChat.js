@@ -8,22 +8,23 @@ const useStyles = makeStyles(() => ({
   root: {
     display: "flex",
     flexGrow: 8,
-    flexDirection: "column"
+    flexDirection: "column",
+    maxHeight: "97vh"
   },
   chatContainer: {
-    marginLeft: 41,
-    marginRight: 41,
     display: "flex",
     flexDirection: "column",
+    maxHeight: "75vh",
     flexGrow: 1,
+    overflowX: "hidden",
+    overflowY: "auto",
     justifyContent: "space-between"
   }
 }));
 
-const ActiveChat = (props) => {
+const ActiveChat = () => {
   const classes = useStyles();
   const user = useSelector((state) => state.user);
-  // const { user } = props;
   const conversation = useSelector(
     (state) =>
       (state.conversations &&
@@ -47,12 +48,14 @@ const ActiveChat = (props) => {
               messages={conversation.messages}
               otherUser={conversation.otherUser}
               userId={user.id}
-            />
-            <Input
-              otherUser={conversation.otherUser}
-              conversationId={conversation.id}
+              typing={conversation.typing}
             />
           </Box>
+          <Input
+            otherUser={conversation.otherUser}
+            conversationId={conversation.id}
+            typing={conversation.typing}
+          />
         </>
       )}
     </Box>

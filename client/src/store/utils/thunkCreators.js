@@ -5,7 +5,8 @@ import {
   gotConversations,
   addConversation,
   setNewMessage,
-  setSearchedUsers
+  setSearchedUsers,
+  setReadMessages
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -117,5 +118,45 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
     dispatch(setSearchedUsers(data));
   } catch (error) {
     console.error(error);
+  }
+};
+
+const readMessage = (conversation, data) => {
+  socket.emit("read-message", {
+    conversationId: conversation.id,
+    recipientId: conversation.otherUser.id,
+    messageIds: data.updatedMessages
+  });
+};
+
+export const updateMessageStatus = (conversation) => async (dispatch) => {
+  try {
+    if (conversation.messages.length) {
+      // request will return message ids for the updated messages in the conversation
+      const { data } = await axios.patch("/api/messages/read", {
+        otherUserId: conversation.otherUser.id
+      });
+
+      if (data.updatedMessages.length) {
+        // dispatch action to update read status of messages in the state
+        await dispatch(setReadMessages(conversation.id, data.updatedMessages));
+        // emit read message on sockets
+        readMessage(conversation, data);
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updateTypingStatus = (emitData) => async (dispatch) => {
+  try {
+    socket.emit("typing-status-update", {
+      conversationId: emitData.conversationId,
+      recipientId: emitData.otherUserId,
+      typing: emitData.typing
+    });
+  } catch (error) {
+    console.log(error);
   }
 };

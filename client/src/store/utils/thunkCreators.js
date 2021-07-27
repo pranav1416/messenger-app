@@ -1,10 +1,11 @@
 import axios from "axios";
+import { clearOnLogout } from "../index";
 import socket from "../../socket";
 import {
   gotConversations,
   addConversation,
   setNewMessage,
-  setSearchedUsers,
+  setSearchedUsers
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -61,6 +62,7 @@ export const logout = (id) => async (dispatch) => {
     await axios.delete("/auth/logout");
     await localStorage.removeItem("messenger-token");
     dispatch(gotUser({}));
+    dispatch(clearOnLogout());
     socket.emit("logout", id);
   } catch (error) {
     console.error(error);
@@ -87,7 +89,7 @@ const sendMessage = (data, body) => {
   socket.emit("new-message", {
     message: data.message,
     recipientId: body.recipientId,
-    sender: data.sender,
+    sender: data.sender
   });
 };
 

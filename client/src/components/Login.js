@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/utils/thunkCreators";
 import { SnackbarError } from "../components";
 import { SideImage } from "./common";
@@ -54,20 +54,20 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Login = (props) => {
+const Login = () => {
   const classes = useStyles();
   const history = useHistory();
   const [errorMessage, setErrorMessage] = useState("");
   const [snackBarOpen, setSnackBarOpen] = useState(false);
-  const { user, login } = props;
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    console.log("handleLogin");
     const username = event.target.username.value;
     const password = event.target.password.value;
     if (username && password) {
-      await login({ username, password });
+      await dispatch(login({ username, password }));
     } else {
       setErrorMessage("Please enter valid username and password");
       setSnackBarOpen(true);
@@ -156,18 +156,4 @@ const Login = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    login: (credentials) => {
-      dispatch(login(credentials));
-    }
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;

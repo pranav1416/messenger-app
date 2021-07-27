@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 import { FormControl, FilledInput, InputAdornment } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 
-const styles = {
+const useStyles = makeStyles(() => ({
   filledInput: {
     height: 50,
     background: "#E9EEF9",
@@ -14,42 +14,41 @@ const styles = {
     letterSpacing: 0,
     display: "flex",
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: 20
   },
   input: {
     "&::placeholder": {
       color: "#ADC0DE",
-      opacity: 1,
-    },
-  },
-};
+      opacity: 1
+    }
+  }
+}));
 
-class Search extends Component {
-  handleSubmit = (event) => {
+const Search = ({ handleChange }) => {
+  const classes = useStyles();
+
+  const handleSubmit = (event) => {
     event.preventDefault();
   };
 
-  render() {
-    const { classes } = this.props;
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <FormControl fullWidth hiddenLabel>
-          <FilledInput
-            name="search"
-            onChange={this.props.handleChange}
-            classes={{ root: classes.filledInput, input: classes.input }}
-            disableUnderline
-            placeholder="Search"
-            startAdornment={
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            }
-          ></FilledInput>
-        </FormControl>
-      </form>
-    );
-  }
-}
+  return (
+    <form onSubmit={(e) => handleSubmit(e)}>
+      <FormControl fullWidth hiddenLabel>
+        <FilledInput
+          name='search'
+          onChange={(e) => handleChange(e)}
+          classes={{ root: classes.filledInput, input: classes.input }}
+          disableUnderline
+          placeholder='Search'
+          startAdornment={
+            <InputAdornment position='start'>
+              <SearchIcon />
+            </InputAdornment>
+          }
+        ></FilledInput>
+      </FormControl>
+    </form>
+  );
+};
 
-export default withStyles(styles)(Search);
+export default Search;

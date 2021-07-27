@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { SideImage } from "./common";
 import { SnackbarError } from "../components";
 import { register } from "../store/utils/thunkCreators";
@@ -54,13 +54,14 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Signup = (props) => {
+const Signup = () => {
   const classes = useStyles();
   const history = useHistory();
   const [errorMessage, setErrorMessage] = useState("");
   const [snackBarOpen, setSnackBarOpen] = useState(false);
-  const { user, register } = props;
   const [formErrorMessage, setFormErrorMessage] = useState({});
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const handleRegister = async (event) => {
     event.preventDefault();
@@ -75,7 +76,7 @@ const Signup = (props) => {
     }
 
     if (username && email && password) {
-      await register({ username, email, password });
+      await dispatch(register({ username, email, password }));
     } else {
       setErrorMessage("Please enter valid username and password");
       setSnackBarOpen(true);
@@ -202,18 +203,4 @@ const Signup = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    register: (credentials) => {
-      dispatch(register(credentials));
-    }
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Signup);
+export default Signup;

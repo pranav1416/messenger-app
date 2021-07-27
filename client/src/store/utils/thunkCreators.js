@@ -143,8 +143,6 @@ export const updateMessageStatus = (conversation) => async (dispatch) => {
         // emit read message on sockets
         readMessage(conversation, data);
       }
-    } else {
-      console.log("sender is user");
     }
   } catch (error) {
     console.error(error);
